@@ -5,14 +5,13 @@ import httpStatus from "http-status";
 import { UserService } from "./user.service";
 
 const createPatient = catchAsync(async (req: Request, res: Response) => {
-      console.log(req.body);
-      // const result = await UserService.createPatient(req.body);
+      const result = await UserService.createPatient(req);
 
       sendResponse(res, {
             success: true,
             statusCode: httpStatus.CREATED,
             message: "Patient created successfully",
-            data: "result"
+            data: result
       })
 });
 
