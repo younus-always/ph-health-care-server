@@ -14,4 +14,4 @@ router.post("/create-patient",
 );
 
 
-export const UserRoute = router;
+export const UserRoutes = router;
