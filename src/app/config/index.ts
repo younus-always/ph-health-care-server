@@ -7,4 +7,6 @@ export default {
       port: process.env.PORT,
       node_env: process.env.NODE_ENV,
       database_url: process.env.DATABASE_URL,
+      salt_round: process.env.SALT_ROUND,
+      cloud_name: process.env.CLOUD_NAME
 };
