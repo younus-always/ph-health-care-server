@@ -4,7 +4,7 @@ import { prisma } from "../../utils/prisma";
 import bcryptjs from "bcryptjs";
 import { fileUploader } from "../../utils/fileUploader";
 import { calculatePagination, IOptions } from "../../utils/pagination";
-import { Admin, Prisma, UserRole } from "@prisma/client";
+import { Admin, Doctor, Prisma, UserRole } from "@prisma/client";
 import { userSearchableFields } from "./user.constants";
 
 const createPatient = async (req: Request) => {
@@ -57,7 +57,7 @@ const createAdmin = async (req: Request): Promise<Admin> => {
       return result;
 };
 
-const createDoctor = async (req: Request) => {
+const createDoctor = async (req: Request): Promise<Doctor> => {
       if (req.file) {
             const uploadResult = await fileUploader.uploadToCloudinary(req.file);
             req.body.doctor.profilePhoto = uploadResult?.secure_url;

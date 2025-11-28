@@ -4,7 +4,8 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { UserService } from "./user.service";
 import { pick } from "../../utils/pick";
-import { userFilterableFields, userOptionsFields } from "./user.constants";
+import { userFilterableFields } from "./user.constants";
+import { optionsFields } from "../../constant";
 
 const createPatient = catchAsync(async (req: Request, res: Response) => {
       const result = await UserService.createPatient(req);
@@ -41,7 +42,7 @@ const createDoctor = catchAsync(async (req: Request, res: Response) => {
 
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
       const filters = pick(req.query, userFilterableFields); // searching, filtering
-      const options = pick(req.query, userOptionsFields);  // sorting, pagination
+      const options = pick(req.query, optionsFields);  // sorting, pagination
 
       const result = await UserService.getAllFromDB(filters, options);
 
