@@ -1,3 +1,4 @@
+import { IJwtPayload } from './../../types/index';
 import { addMinutes, addHours, format } from "date-fns";
 import { prisma } from "../../utils/prisma";
 import { calculatePagination, IOptions } from "../../utils/pagination";
@@ -57,7 +58,7 @@ const createSchedule = async (payload: any) => {
       return schedules;
 };
 
-const getSchedules = async (filters: any, options: IOptions) => {
+const getSchedules = async (user: IJwtPayload, filters: any, options: IOptions) => {
       const { page, limit, skip, sortBy, sortOrder } = calculatePagination(options);
       const { startDateTime: filterStartDateTime, endDateTime: filterEndDateTime } = filters;
       const andConditions: Prisma.ScheduleWhereInput[] = [];
@@ -83,14 +84,32 @@ const getSchedules = async (filters: any, options: IOptions) => {
             AND: andConditions
       } : {};
 
+      const doctorSchedules = await prisma.doctorSchedules.findMany({
+            where: {
+                  doctor: {
+                        email: user?.email
+                  }
+            },
+            select: {
+                  scheduleId: true
+            }
+      });
+      const doctorScheduleIds = doctorSchedules.map(schedule => schedule.scheduleId);
+
       const result = await prisma.schedule.findMany({
-            where: whereConditions,
+            where: {
+                  ...whereConditions,
+                  id: {
+                        notIn: doctorScheduleIds
+                  }
+            },
             skip,
             take: limit,
             orderBy: {
                   [sortBy]: sortOrder
             }
       });
+
       const total = await prisma.schedule.count({
             where: whereConditions
       });
@@ -105,7 +124,15 @@ const getSchedules = async (filters: any, options: IOptions) => {
       }
 };
 
+const deleteSchedule = async (id: string) => {
+      return await prisma.schedule.delete({
+            where: { id }
+      })
+}
+
+
 export const ScheduleService = {
       createSchedule,
-      getSchedules
+      getSchedules,
+      deleteSchedule
 };
