@@ -3,8 +3,9 @@ import { addMinutes, addHours, format } from "date-fns";
 import { prisma } from "../../utils/prisma";
 import { calculatePagination, IOptions } from "../../utils/pagination";
 import { Prisma } from "@prisma/client";
+import { ISchedulePayload } from './schedule.interface';
 
-const createSchedule = async (payload: any) => {
+const createSchedule = async (payload: ISchedulePayload) => {
       const { startTime, endTime, startDate, endDate } = payload;
       const intervalTime = 30;
       const schedules = [];
