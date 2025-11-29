@@ -1,11 +1,12 @@
 import { UserStatus } from "@prisma/client";
 import { prisma } from "../../utils/prisma";
 import bcryptjs from 'bcryptjs';
-import jwt, { SignOptions } from "jsonwebtoken";
 import config from "../../config";
 import { generateToken } from "../../utils/jwt";
+import ApiError from "../../errors/ApiError";
+import { ILoginPayload } from "./auth.interface";
 
-const login = async (payload: { email: string, password: string }) => {
+const login = async (payload: ILoginPayload) => {
       const user = await prisma.user.findUniqueOrThrow({
             where: {
                   email: payload.email,
@@ -15,7 +16,7 @@ const login = async (payload: { email: string, password: string }) => {
 
       const isMatchedPassword = await bcryptjs.compare(payload.password, user.password);
       if (!isMatchedPassword) {
-            throw new Error("Password is incorrect");
+            throw new ApiError(400, "Password is incorrect");
       };
 
       const jwtPayload = {
@@ -31,7 +32,7 @@ const login = async (payload: { email: string, password: string }) => {
       return {
             accessToken,
             refreshToken,
-            needPasswordChange:user.needPasswordChange
+            needPasswordChange: user.needPasswordChange
       };
 };
 
